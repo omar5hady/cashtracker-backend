@@ -7,15 +7,15 @@ import { AuthEmail } from '../emails/AuthEmail';
 
 export class AuthController {
     static createAccount = async (req: Request, res: Response) => {
-        const {email, password} = req.body
+        const { email, password } = req.body
 
         // Prevenir duplicados
         const userExist = await User.findOne({
             where: { email }
         })
-        if(userExist){
+        if (userExist) {
             const error = new Error("Un usuario con ese email ya esta registrado")
-            return res.status(409).json({error: error.message})
+            return res.status(409).json({ error: error.message })
         }
 
         try {
@@ -34,5 +34,21 @@ export class AuthController {
         } catch (error) {
             res.status(500).json({ error: 'Hubo un error' })
         }
+    }
+
+    static confirmAccount = async (req: Request, res: Response) => {
+        const { token } = req.body
+
+        const user = await User.findOne({ where: { token } })
+
+        if (!user) {
+            const error = new Error('Token no valido')
+            return res.status(401).json({ error: error.message })
+        }
+        user.confirmed = true
+        user.token = null
+        await user.save()
+        res.json("Cuenta confirmada correctamente")
+        console.log("Desde confirm account");
     }
 }
