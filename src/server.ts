@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import { db } from './config/db'
 import budgetRouter from './routes/budgetRouter'
 import authRouter from './routes/authRouter'
+// import { limiter } from './config/limiter'
 
 async function connectDB() {
     try {
@@ -23,6 +24,8 @@ const app = express()
 app.use(morgan('dev'))
 
 app.use(express.json())
+
+// app.use(limiter)//De esta manera todas las rutas estaras con el limiter configurado
 
 app.use('/api/budgets', budgetRouter)  //Se usa el router de Budgets
 app.use('/api/auth', authRouter)  //Se usa el router de Budgets
